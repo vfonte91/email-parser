@@ -2,18 +2,14 @@ package com.app.emailparser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Email {
 	private List<String> content;
-	private String file_name;
+	private String file_name = "";
 
 	public Email(File input_file) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(input_file));
@@ -21,6 +17,7 @@ public class Email {
 		String line;
 		while ((line = br.readLine()) != null)
 			content.add(line);
+		br.close();
 	}
 
 	public Email(List<String> content, String file_name) {
@@ -46,6 +43,18 @@ public class Email {
 		for (String line  : content) {
 			if (line.contains("From: ")) {
 				line = line.replace("From: ", "").replaceAll(".*<", "").replaceAll(">", "");
+				results = line;
+				break;
+			}
+		}
+		return results;
+	}
+
+	public String getDateSent() {
+		String results = "";
+		for (String line  : content) {
+			if (line.contains("Date: ")) {
+				line = line.replace("Date: ", "");
 				results = line;
 				break;
 			}
