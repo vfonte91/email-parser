@@ -37,6 +37,10 @@ public class Email {
 			System.out.println(line);
 	}
 
+	public String getFileName() {
+		return this.file_name;
+	}
+
 	public String getFromAddress() {
 		String results = "";
 		for (String line  : content) {
