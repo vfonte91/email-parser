@@ -1,11 +1,10 @@
-/**
- * 
- */
 package com.app.emailparser;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -29,31 +28,39 @@ public class EmailParser {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException, FileNotFoundException {
-		List<Email> emailFiles = getEmailFiles(args[0]);
-		for (Email email : emailFiles) {
-			System.out.println(getResult(email));
-		}
+		String output_file = args[1];
+		List<Email> emails = getEmailFiles(args[0]);
+		printResults(emails, output_file);
 	}
 
 	public static List<Email> getEmailFiles(String input_file) throws IOException {
 		List<Email> results = new ArrayList<>();
-		TarArchiveInputStream fin = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(input_file)));
+		TarArchiveInputStream input_stream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(input_file)));
         TarArchiveEntry entry =  null;
-        BufferedReader br = null;
+        BufferedReader reader = null;
         List<String> contents = null;
-        while ((entry = fin.getNextTarEntry()) != null) {
+        while ((entry = input_stream.getNextTarEntry()) != null) {
         		if (entry.isDirectory())
         			continue;
         		contents = new ArrayList<String>();
-            br = new BufferedReader(new InputStreamReader(fin));
+        		reader = new BufferedReader(new InputStreamReader(input_stream));
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 contents.add(line);
             }
-            results.add(new EmailSimple (contents, entry.getName()));
+            results.add(new EmailSimple(contents, entry.getName()));
         }
-       fin.close();
+       input_stream.close();
        return results;
+	}
+
+	public static void printResults(List<Email> emails, String output_file) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(output_file));
+		for (Email email : emails) {
+			writer.write(getResult(email));
+			writer.newLine();
+		}
+		writer.close();
 	}
 
 	public static String getResult(Email email) {
