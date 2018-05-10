@@ -3,6 +3,8 @@ package com.app.emailparser;
 import java.util.List;
 
 /**
+ * A simple implementation of the Email interface
+ *
  * @author Vince Fonte
  */
 public class EmailSimple implements Email {
@@ -14,51 +16,61 @@ public class EmailSimple implements Email {
 		this.file_name = file_name;
 	}
 
+	@Override
 	public String getFileName() {
 		return this.file_name;
 	}
 
+	@Override
 	public String getFromAddress() {
 		String results = "";
 		for (String line : content) {
 			if (line.matches("^From:\\s+.*")) {
-				line = line.replaceAll("From:", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
-				results = line;
+				// remove all characters except email address
+				results = line.replaceAll("From:", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
 				break;
 			}
 		}
 		return results;
 	}
 
+	@Override
 	public String getDateSent() {
 		String results = "";
 		for (String line : content) {
 			if (line.matches("^Date:\\s+.*")) {
-				line = line.replaceAll("Date:\\s+", "");
-				results = line;
+				// remove Date: keyword
+				results = line.replaceAll("Date:\\s+", "");
 				break;
 			}
 		}
 		return results;
 	}
 
+	@Override
 	public String getSubject() {
 		String results = "";
 		int count = 0;
 		for (String line : content) {
 			if (line.matches("^Subject:\\s+.*")) {
+				// remove Subject: keyword
 				line = line.replace("Subject: ", "");
 				results = line;
 				// Some subjects are multiple lines that begin with a space
+				// only grabs the first line if it reaches the end of the file
+				// without finding the end of the subject
 				try {
-				String rest = "";
-				while (content.get(count + 1).matches("^\\s+.*$")) {
-					// convert multiple lines into single
-					rest = rest + content.get(count + 1);
-					count++;
+					String rest = "";
+					while (content.get(count + 1).matches("^\\s+.*$")) {
+						// convert multiple lines into single
+						rest = rest + content.get(count + 1);
+						count++;
 				}
 					results = results + rest;
-				} catch (IndexOutOfBoundsException e) {}
+				} catch (IndexOutOfBoundsException e) {
+					System.err.println("WARNING: could not find end of subject for " + this.file_name);
+					System.err.println("Only using the first line in the subject");
+				}
 				break;
 			}
 			count++;
