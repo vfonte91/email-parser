@@ -56,6 +56,6 @@ public class EmailParser {
 	}
 
 	public static String getResult(Email email) {
-		return email.getFileName() + "|" + email.getDateSent() + "|" + email.getFromAddress();
+		return email.getFileName() + "|" + email.getDateSent() + "|" + email.getFromAddress() + "|" + email.getSubject();
 	}
 }

@@ -24,10 +24,6 @@ public class Email {
 		this.content = content;
 		this.file_name = file_name;
 	}
-	
-	public String printOutput(String output) {
-		return "Foo!";
-	}
 
 	public void printContents() {
 		for (String line : content)
@@ -40,9 +36,9 @@ public class Email {
 
 	public String getFromAddress() {
 		String results = "";
-		for (String line  : content) {
+		for (String line : content) {
 			if (line.contains("From: ")) {
-				line = line.replace("From: ", "").replaceAll(".*<", "").replaceAll(">", "");
+				line = line.replace("From: ", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
 				results = line;
 				break;
 			}
@@ -52,12 +48,31 @@ public class Email {
 
 	public String getDateSent() {
 		String results = "";
-		for (String line  : content) {
+		for (String line : content) {
 			if (line.contains("Date: ")) {
 				line = line.replace("Date: ", "");
 				results = line;
 				break;
 			}
+		}
+		return results;
+	}
+
+	public String getSubject() {
+		String results = "";
+		int count = 0;
+		for (String line : content) {
+			if (line.contains("Subject: ")) {
+				line = line.replace("Subject: ", "");
+				results = line;
+				// Some subjects are multiple lines. This grabs each line until it finds another keyword. subject is converted to one line
+				while (!content.get(count + 1).matches("(MIME-Version:|Mime-Version:|Date:|To:|Message-ID:|List-Unsubscribe:|From:).*")) {
+					results = results + content.get(count + 1);
+					count++;
+				}
+				break;
+			}
+			count++;
 		}
 		return results;
 	}
