@@ -18,8 +18,9 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import com.app.emailparser.Email;
 
 /**
- * @author Vince Fonte
+ * A program for parsing email from an archive and extracting data
  *
+ * @author Vince Fonte
  */
 public class EmailParser {
 
@@ -49,7 +50,7 @@ public class EmailParser {
             while ((line = br.readLine()) != null) {
                 contents.add(line);
             }
-            results.add(new Email (contents, entry.getName()));
+            results.add(new EmailSimple (contents, entry.getName()));
         }
        fin.close();
        return results;
