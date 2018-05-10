@@ -37,8 +37,8 @@ public class Email {
 	public String getFromAddress() {
 		String results = "";
 		for (String line : content) {
-			if (line.contains("From: ")) {
-				line = line.replace("From: ", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
+			if (line.matches("^From:\\s+.*")) {
+				line = line.replaceAll("From:", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
 				results = line;
 				break;
 			}
@@ -49,8 +49,8 @@ public class Email {
 	public String getDateSent() {
 		String results = "";
 		for (String line : content) {
-			if (line.contains("Date: ")) {
-				line = line.replace("Date: ", "");
+			if (line.matches("^Date:\\s+.*")) {
+				line = line.replaceAll("Date:\\s+", "");
 				results = line;
 				break;
 			}
@@ -62,7 +62,7 @@ public class Email {
 		String results = "";
 		int count = 0;
 		for (String line : content) {
-			if (line.contains("Subject: ")) {
+			if (line.matches("^Subject:\\s+.*")) {
 				line = line.replace("Subject: ", "");
 				results = line;
 				// Some subjects are multiple lines that begin with a space
