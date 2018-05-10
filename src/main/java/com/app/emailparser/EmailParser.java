@@ -23,16 +23,17 @@ import com.app.emailparser.Email;
  */
 public class EmailParser {
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
 	public static void main(String[] args) throws IOException, FileNotFoundException {
 		String output_file = args[1];
 		List<Email> emails = getEmailFiles(args[0]);
 		printResults(emails, output_file);
 	}
 
+	/**
+	 * Uncompresses archive and creates list of Email objects from text files
+	 * @param input_file - input archive file containing plain text email files
+	 * @return list of Email objects
+	 */
 	public static List<Email> getEmailFiles(String input_file) throws IOException {
 		List<Email> results = new ArrayList<>();
 		TarArchiveInputStream input_stream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(input_file)));
@@ -54,6 +55,11 @@ public class EmailParser {
        return results;
 	}
 
+	/**
+	 * Prints the results of parsed emails to a files
+	 * @param emails - list of Email objects
+	 * @param output_file - the file to print results to
+	 */
 	public static void printResults(List<Email> emails, String output_file) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(output_file));
 		for (Email email : emails) {
