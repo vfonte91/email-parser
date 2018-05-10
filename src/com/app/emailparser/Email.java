@@ -65,11 +65,16 @@ public class Email {
 			if (line.contains("Subject: ")) {
 				line = line.replace("Subject: ", "");
 				results = line;
-				// Some subjects are multiple lines. This grabs each line until it finds another keyword. subject is converted to one line
-				while (!content.get(count + 1).matches("(MIME-Version:|Mime-Version:|Date:|To:|Message-ID:|List-Unsubscribe:|From:).*")) {
-					results = results + content.get(count + 1);
+				// Some subjects are multiple lines that begin with a space
+				try {
+				String rest = "";
+				while (content.get(count + 1).matches("^\\s+.*$")) {
+					// convert multiple lines into single
+					rest = rest + content.get(count + 1);
 					count++;
 				}
+				results = results + rest;
+				} catch (IndexOutOfBoundsException e) {}
 				break;
 			}
 			count++;
