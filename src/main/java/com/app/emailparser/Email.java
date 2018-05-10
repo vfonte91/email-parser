@@ -23,7 +23,7 @@ public interface Email {
 	String getDateSent();
 
 	/**
-	 * Returns the subject
+	 * Returns the subject. Converts mutlilined subjects into one line
 	 *
 	 * @return string
 	 */
