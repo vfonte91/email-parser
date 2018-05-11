@@ -25,7 +25,7 @@ public class EmailSimple implements Email {
 	public String getFromAddress() {
 		String results = "";
 		for (String line : content) {
-			if (line.matches("^From:\\s+.*")) {
+			if (line.matches("^[Ff]rom:\\s+.*")) {
 				// remove all characters except email address
 				results = line.replaceAll("From:", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
 				break;
@@ -38,7 +38,7 @@ public class EmailSimple implements Email {
 	public String getDateSent() {
 		String results = "";
 		for (String line : content) {
-			if (line.matches("^Date:\\s+.*")) {
+			if (line.matches("^[Dd]ate:\\s+.*")) {
 				// remove Date: keyword
 				results = line.replaceAll("Date:\\s+", "");
 				break;
@@ -52,7 +52,7 @@ public class EmailSimple implements Email {
 		String results = "";
 		int count = 0;
 		for (String line : content) {
-			if (line.matches("^Subject:\\s+.*")) {
+			if (line.matches("^[Ss]ubject:\\s+.*")) {
 				// remove Subject: keyword
 				line = line.replace("Subject: ", "");
 				results = line;

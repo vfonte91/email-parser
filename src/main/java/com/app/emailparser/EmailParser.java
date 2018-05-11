@@ -26,6 +26,7 @@ public class EmailParser {
 	public static void main(String[] args) {
 		if (args.length < 2) {
 			System.err.println("ERROR: expecting input archive file and output file as parameters");
+			System.err.println(help());
 			System.exit(1);
 		}
 		String output_file = args[1];
@@ -44,13 +45,13 @@ public class EmailParser {
 	public static List<Email> extractEmails(String input_file) {
 		List<Email> results = new ArrayList<>();
 		TarArchiveInputStream input_stream = null;
-        BufferedReader reader = null;
+		BufferedReader reader = null;
 		try {
 			input_stream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(input_file)));
-	        TarArchiveEntry entry =  null;
-	        List<String> contents = null;
-	        // iterate over each entry in the compressed file
-	        while ((entry = input_stream.getNextTarEntry()) != null) {
+			TarArchiveEntry entry =  null;
+			List<String> contents = null;
+			// iterate over each entry in the compressed file
+			while ((entry = input_stream.getNextTarEntry()) != null) {
 	        	// skip if entry is a directory
 	        	if (entry.isDirectory())
 	        		continue;
@@ -117,5 +118,11 @@ public class EmailParser {
 	 */
 	public static String getResult(Email email) {
 		return email.getFileName() + "|" + email.getDateSent() + "|" + email.getFromAddress() + "|" + email.getSubject();
+	}
+
+	public static String help() {
+		return "Usage: java -jar email-parser.jar INPUT_DATA OUTPUT_FILE\n" +
+		 "INPUT_DATA - gzipped tar file containing plain text email files\n" +
+		 "OUTPUT_FILE - file to print the extracted data";
 	}
 }
