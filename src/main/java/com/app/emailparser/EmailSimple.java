@@ -57,8 +57,7 @@ public class EmailSimple implements Email {
 				line = line.replace("Subject: ", "");
 				results = line;
 				// Some subjects are multiple lines that begin with a space
-				// only grabs the first line if it reaches the end of the file
-				// without finding the end of the subject
+				// only grabs the first line if it reaches the end of the file without finding the end of the subject
 				try {
 					String rest = "";
 					while (content.get(count + 1).matches("^\\s+.*$")) {

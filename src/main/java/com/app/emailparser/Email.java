@@ -4,6 +4,7 @@
 package com.app.emailparser;
 
 /**
+ * An object that represents an email. Includes functions for extracting data
  * @author Vince Fonte
  */
 public interface Email {
