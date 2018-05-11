@@ -2,29 +2,16 @@ package com.app.emailparser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class EmailParserTests {
 	private final String output_file = "out";
 
-    @BeforeAll
-    static void initAll() {
-    }
-
-    @BeforeEach
-    void init() {
-    }
-
     @Test
-    void multilineSubject() throws IOException {
+    void multilineSubject() {
     	List<String> test_email = new ArrayList<String>();
     	test_email.add("Subject: Woah, this subject");
     	test_email.add(" is on multiple");
@@ -35,7 +22,7 @@ class EmailParserTests {
     }
 
     @Test
-    void fromAddress() throws IOException {
+    void fromAddress() {
     	List<String> test_email = new ArrayList<String>();
     	test_email.add("Subject: Hey!");
     	test_email.add("From: Some guy <someguy@google.com>");
@@ -45,7 +32,7 @@ class EmailParserTests {
     }
 
     @Test
-    void dateSent() throws IOException {
+    void dateSent() {
     	List<String> test_email = new ArrayList<String>();
     	test_email.add("Subject: Hey!");
     	test_email.add("From: Some guy <someguy@google.com>");
@@ -55,7 +42,7 @@ class EmailParserTests {
     }
 
     @Test
-    void fileName() throws IOException {
+    void fileName() {
     	List<String> test_email = new ArrayList<String>();
     	test_email.add("From: Some guy <someguy@google.com>");
     	Email email = new EmailSimple(test_email, output_file);
@@ -63,7 +50,7 @@ class EmailParserTests {
     }
 
     @Test
-    void noData() throws IOException {
+    void noData(){
     	List<String> test_email = new ArrayList<String>();
     	test_email.add("Content-Type: text/html; charset=UTF-8");
     	test_email.add("To: Some guy <someguy@google.com>");
@@ -72,14 +59,6 @@ class EmailParserTests {
     	assertEquals(email.getDateSent(), "");
     	assertEquals(email.getFromAddress(), "");
     	assertEquals(email.getSubject(), "");
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
-    @AfterAll
-    static void tearDownAll() {
     }
 
 }
