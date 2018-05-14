@@ -61,22 +61,22 @@ public class EmailParser {
 			input_stream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(input_file)));
 			TarArchiveEntry entry =  null;
 			List<String> contents = null;
-            writer = new BufferedWriter(output_file);
+			writer = new BufferedWriter(output_file);
 			// iterate over each entry in the compressed file
 			while ((entry = input_stream.getNextTarEntry()) != null) {
-	        	// skip if entry is a directory
-	        	if (entry.isDirectory())
-	        		continue;
-	        	contents = new ArrayList<String>();
-	        	reader = new BufferedReader(new InputStreamReader(input_stream));
-	            String line;
-	            // read contents line by line into a list of strings
-	            while ((line = reader.readLine()) != null) {
-	                contents.add(line);
-	            }
-	            Email email = new EmailSimple(contents, entry.getName());
-	            printResults(email, writer);
-	        }
+				// skip if entry is a directory
+				if (entry.isDirectory())
+					continue;
+				contents = new ArrayList<String>();
+				reader = new BufferedReader(new InputStreamReader(input_stream));
+				String line;
+				// read contents line by line into a list of strings
+				while ((line = reader.readLine()) != null) {
+					contents.add(line);
+				}
+				Email email = new EmailSimple(contents, entry.getName());
+				printResults(email, writer);
+			}
 		} catch (FileNotFoundException e) {
 			System.err.println("ERROR: Could not find input file: " + input_file);
 			e.printStackTrace();
@@ -93,7 +93,7 @@ public class EmailParser {
 				e.printStackTrace();
 			}
 		}
-       return results;
+		return results;
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class EmailParser {
 	 */
 	public static String help() {
 		return "Usage: java -jar email-parser.jar INPUT_DATA OUTPUT_FILE\n" +
-		 "INPUT_DATA - gzipped tar file containing plain text email files\n" +
-		 "OUTPUT_FILE - file to print the extracted data";
+				"INPUT_DATA - gzipped tar file containing plain text email files\n" +
+				"OUTPUT_FILE - file to print the extracted data";
 	}
 }

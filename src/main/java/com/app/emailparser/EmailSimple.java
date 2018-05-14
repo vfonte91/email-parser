@@ -64,7 +64,7 @@ public class EmailSimple implements Email {
 						// convert multiple lines into single
 						rest = rest + content.get(count + 1);
 						count++;
-				}
+					}
 					results = results + rest;
 					// replace and | with a !
 					results = results.replace("|", "!");
