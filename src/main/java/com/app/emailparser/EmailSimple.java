@@ -66,7 +66,7 @@ public class EmailSimple implements Email {
 						count++;
 					}
 					results = results + rest;
-					// replace and | with a !
+					// replace any | with a !
 					results = results.replace("|", "!");
 				} catch (IndexOutOfBoundsException e) {
 					System.err.println("WARNING: could not find end of subject for " + this.file_name);
