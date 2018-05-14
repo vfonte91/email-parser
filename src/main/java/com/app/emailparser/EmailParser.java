@@ -29,11 +29,21 @@ public class EmailParser {
 			System.err.println(help());
 			System.exit(1);
 		}
-		String output_file = args[1];
-		// uncompress archive and create a list of email objects
-		List<Email> emails = extractEmails(args[0]);
-		// print the extracted data to a file
-		printResults(emails, output_file);
+		String output_file_name = args[1];
+		FileWriter output_file = null;
+		try {
+			output_file = new FileWriter(output_file_name);
+		} catch (IOException e) {
+			System.err.println("ERROR: failed to open output file for writing: " +  output_file_name);
+			e.printStackTrace();
+		}
+		extractEmails(args[0], output_file);
+		try {
+			output_file.close();
+		} catch (IOException e) {
+			System.err.println("ERROR: Failed to close output file: " + output_file);
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -42,14 +52,16 @@ public class EmailParser {
 	 * @param input_file - input archive file containing plain text email files
 	 * @return list of Email objects
 	 */
-	public static List<Email> extractEmails(String input_file) {
+	public static List<Email> extractEmails(String input_file, FileWriter output_file) {
 		List<Email> results = new ArrayList<>();
 		TarArchiveInputStream input_stream = null;
 		BufferedReader reader = null;
+		BufferedWriter writer = null;
 		try {
 			input_stream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(input_file)));
 			TarArchiveEntry entry =  null;
 			List<String> contents = null;
+            writer = new BufferedWriter(output_file);
 			// iterate over each entry in the compressed file
 			while ((entry = input_stream.getNextTarEntry()) != null) {
 	        	// skip if entry is a directory
@@ -62,8 +74,8 @@ public class EmailParser {
 	            while ((line = reader.readLine()) != null) {
 	                contents.add(line);
 	            }
-	            // create an email object out of the list of strings and add it to the results
-	            results.add(new EmailSimple(contents, entry.getName()));
+	            Email email = new EmailSimple(contents, entry.getName());
+	            printResults(email, writer);
 	        }
 		} catch (FileNotFoundException e) {
 			System.err.println("ERROR: Could not find input file: " + input_file);
@@ -75,8 +87,9 @@ public class EmailParser {
 			try {
 				input_stream.close();
 				reader.close();
+				writer.close();
 			} catch (IOException e) {
-				System.err.println("ERROR: Failed to close input file:" + input_file);
+				System.err.println("ERROR: Failed to close input file: " + input_file);
 				e.printStackTrace();
 			}
 		}
@@ -86,27 +99,18 @@ public class EmailParser {
 	/**
 	 * Prints the results of parsed email to a files
 	 * @param emails - list of Email objects
-	 * @param output_file - the file to print results to
+	 * @param writer - file to write output to
 	 */
-	public static void printResults(List<Email> emails, String output_file) {
-		BufferedWriter writer = null;
+	public static void printResults(Email email, BufferedWriter writer) {
 		try {
-			writer = new BufferedWriter(new FileWriter(output_file));
-			// print the extracted data from each email to the output file, line by line
-			for (Email email : emails) {
-				writer.write(getResult(email));
-				writer.newLine();
-			}
+			// print the extracted data from email to the output file
+			String results = getResult(email);
+			writer.write(results);
+			writer.newLine();
+			writer.flush();
 		} catch (IOException e) {
-			System.err.println("ERROR: Failed to write to ouput file: " + output_file);
+			System.err.println("ERROR: Failed to write to ouput file");
 			e.printStackTrace();
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				System.err.println("ERROR: Failed to close output file:" + output_file);
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -120,6 +124,9 @@ public class EmailParser {
 		return email.getFileName() + "|" + email.getDateSent() + "|" + email.getFromAddress() + "|" + email.getSubject();
 	}
 
+	/**
+	 * Returns help statement
+	 */
 	public static String help() {
 		return "Usage: java -jar email-parser.jar INPUT_DATA OUTPUT_FILE\n" +
 		 "INPUT_DATA - gzipped tar file containing plain text email files\n" +

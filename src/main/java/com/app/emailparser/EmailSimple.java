@@ -27,7 +27,7 @@ public class EmailSimple implements Email {
 		for (String line : content) {
 			if (line.matches("^[Ff]rom:\\s+.*")) {
 				// remove all characters except email address
-				results = line.replaceAll("From:", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
+				results = line.replaceAll("[Ff]rom:", "").replaceAll(".*<", "").replaceAll(">", "").replaceAll("\\s+","");
 				break;
 			}
 		}
@@ -40,7 +40,7 @@ public class EmailSimple implements Email {
 		for (String line : content) {
 			if (line.matches("^[Dd]ate:\\s+.*")) {
 				// remove Date: keyword
-				results = line.replaceAll("Date:\\s+", "");
+				results = line.replaceAll("[Dd]ate:\\s+", "");
 				break;
 			}
 		}
@@ -54,7 +54,7 @@ public class EmailSimple implements Email {
 		for (String line : content) {
 			if (line.matches("^[Ss]ubject:\\s+.*")) {
 				// remove Subject: keyword
-				line = line.replace("Subject: ", "");
+				line = line.replaceAll("[Ss]ubject: ", "");
 				results = line;
 				// Some subjects are multiple lines that begin with a space
 				// only grabs the first line if it reaches the end of the file without finding the end of the subject
@@ -66,6 +66,8 @@ public class EmailSimple implements Email {
 						count++;
 				}
 					results = results + rest;
+					// replace and | with a !
+					results = results.replace("|", "!");
 				} catch (IndexOutOfBoundsException e) {
 					System.err.println("WARNING: could not find end of subject for " + this.file_name);
 					System.err.println("Only using the first line in the subject");
